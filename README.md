@@ -1,7 +1,7 @@
-#Description
+# Description
 A small program written in rust to change between hex, dec, bin with nice format for binary display. Mainly aim for embedded developer.
 
-#Usage:
+# Usage:
 A command always start with ":". Below is the list of command:
 ```
     :from <base> to <base>      change input base and output base
