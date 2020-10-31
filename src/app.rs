@@ -1,3 +1,5 @@
+//! Main module of the program.
+
 use std::io::{stdin, stdout, Write};
 use std::fmt;
 use std::error::Error;
@@ -15,6 +17,7 @@ Usage:
 
 ";
 
+/// Enum for base types.
 #[derive(PartialEq)]
 enum Base {
     Bin,
@@ -33,6 +36,13 @@ impl fmt::Display for Base {
 }
 
 impl Base {
+    /// Read a string and convert it to u64 based on base type.
+    /// # Example:
+    /// ```
+    /// assert_eq!(Base::Bin.to_num("0b10").ok(), Some(3));
+    /// assert_eq!(Base::Bin.to_num("0001_0000").ok(), Some(16));
+    /// assert_eq!(Base::Hex.to_num("0xff").ok(), Some(255));
+    /// ```
     pub fn to_num(&self, input: &str) -> Result<u64, Box<dyn Error>> {
         match self {
             Base::Bin => {
@@ -62,6 +72,13 @@ impl Base {
         }
     }
 
+    /// Format an u64 number based on base type. Return the formated `String`.
+    /// # Example:
+    /// ```
+    /// assert_eq!(Base::Bin.from(4), "100");
+    /// assert_eq!(Base::Bin.from(16), "0001_0000");
+    /// assert_eq!(Base::Hex.from(255), "0xff");
+    /// ```
     pub fn from(&self, mut num: u64) -> String {
         match self {
             Base::Hex => format!("0x{:x}", num),
@@ -83,12 +100,14 @@ impl Base {
     }
 }
 
+/// Main struct that manage the workflow of the aplication.
 pub struct App {
     in_base: Base,
     out_base: Base,
 }
 
 impl App {
+    /// Creat a new instance of App.
     pub fn new() -> Self {
         Self {
             in_base: Base::Hex,
@@ -96,6 +115,7 @@ impl App {
         }
     }
 
+    /// Read stdin for user input.
     pub fn get_input(&self) -> String {
         print!("<{}>$ ", self.in_base);
         stdout().flush().expect("Fail flushing stdout");
@@ -104,19 +124,27 @@ impl App {
         return input.trim().to_string()
     }
 
+    /// Print output to stdout.
     pub fn print(&self, out: &str) {
         println!("<{}> {}", self.out_base, out);
     }
 
+    /// Convert an input from input base to output base. Default input base is hex
+    /// and output base is bin. These bases can be changed with command `:from <base>`
+    /// and `:to <base>`
     pub fn convert(&self, input: &str) -> Result<String, Box<dyn Error>> {
         let num = self.in_base.to_num(input)?;
         return Ok(self.out_base.from(num));
     }
 
+    /// Check if user input is a command.
     pub fn is_command(&self, cmd: &str) -> bool {
         return cmd.starts_with(START_CMD);
     }
 
+    /// Execute most of commands, except `:q` or `:quit`, these commands are
+    /// executed from `main` function because it relates to the flow of the
+    /// program, not the configuration.
     pub fn execute(&mut self, cmd: &str) -> Result<(), String> {
         if let Some(mut cmd) = cmd.strip_prefix(START_CMD) {
             cmd = cmd.trim();
@@ -139,6 +167,7 @@ impl App {
         Ok(())
     }
 
+    /// Change input and output base.
     fn change_base(&mut self, cmd: &str, arg: &str) -> Result<(), String> {
         match cmd {
             "from" => {
@@ -169,6 +198,7 @@ impl App {
         Ok(())
     }
 
+    /// Print help message.
     fn help(&self) {
         print!("{}", HELP_MSG);
     }

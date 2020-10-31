@@ -1,6 +1,10 @@
+//! A small program to change between hex, dec, bin with nice format for binary display.
+//! Mainly aim for embedded developer.
+
 mod app;
 use app::{App, START_CMD};
 
+/// Main funtion of the program
 fn main() {
     let mut app = App::new();
     loop {
