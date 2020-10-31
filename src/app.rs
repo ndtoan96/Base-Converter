@@ -10,7 +10,7 @@ Usage:
     :from <base>                change input base
     :to <base>                  change output base
 <base> can be \"hex\", \"dec\", \"bin\"
-    :h or :help                 print this message
+    :h or :help                 print help message
     :q or :quit                 stop program
 
 ";
