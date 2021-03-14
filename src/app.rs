@@ -44,6 +44,7 @@ impl Base {
     /// assert_eq!(Base::Hex.to_num("0xff").ok(), Some(255));
     /// ```
     pub fn to_num(&self, input: &str) -> Result<u64, Box<dyn Error>> {
+    	let input = input.strip_suffix('u').unwrap_or(input);
         match self {
             Base::Bin => {
                 let input = input.trim().to_lowercase().replace("_", "");
