@@ -44,7 +44,13 @@ impl Base {
     /// assert_eq!(Base::Hex.to_num("0xff").ok(), Some(255));
     /// ```
     pub fn to_num(&self, input: &str) -> Result<u64, Box<dyn Error>> {
-    	let input = input.strip_suffix('u').unwrap_or(input);
+    	let mut input = input.to_owned();
+        if input.ends_with('u') {
+            input.pop();
+        } else if input.ends_with("uL") {
+            input.pop();
+            input.pop();
+        }
         match self {
             Base::Bin => {
                 let input = input.trim().to_lowercase().replace("_", "");
@@ -57,7 +63,7 @@ impl Base {
                 }
             },
             Base::Dec => {
-                let ret = u64::from_str_radix(input, 10)?;
+                let ret = u64::from_str_radix(&input, 10)?;
                 return Ok(ret);
             }
             Base::Hex => {
